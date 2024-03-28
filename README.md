@@ -96,6 +96,130 @@ int main() {
     return 0;
 }
 ```
+#### exit() is a library function used to terminate the calling process
+```bash
+#include <stdlib.h>
+
+int main() {
+    // Some program logic...
+
+    if (/* Some condition for error */) {
+        // Error occurred, terminate program with non-zero status
+        exit(1);
+    }
+
+    // Otherwise, exit program normally with zero status
+    exit(0);
+}
+```
+
+#### signal() function is used to establish signal handlers for specific signals.
+
+```bash
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+
+void sigint_handler(int signum) {
+    printf("Received SIGINT signal\n");
+    // Perform any necessary actions in response to the signal
+}
+
+int main() {
+    // Registering SIGINT handler
+    signal(SIGINT, sigint_handler);
+
+    // Your program logic goes here
+    // ...
+
+    return 0;
+}
+```
+
+#### sigemptyset():
+##### This function initializes an empty signal set.
+##### It clears all signals from the given signal set.
+##### It takes a pointer to a sigset_t data structure, which represents the set of signals.
+```baah
+#include <stdio.h>
+#include <signal.h>
+
+int main() {
+    sigset_t set;
+    // Initialize an empty signal set
+    sigemptyset(&set);
+
+    // Now 'set' represents an empty signal set
+    // You can add signals to it using sigaddset() if needed
+
+    return 0;
+}
+```
+
+#### sigaddset():
+##### This function adds a specified signal to the given signal set.
+##### It allows you to specify which signals you want to include in the signal set.
+##### It takes two arguments: a pointer to a sigset_t data structure representing the signal set, and the signal number you want to add to the set
+```bash
+#include <stdio.h>
+#include <signal.h>
+
+int main() {
+    sigset_t set;
+    // Initialize an empty signal set
+    sigemptyset(&set);
+
+    // Add SIGINT and SIGTERM to the signal set
+    sigaddset(&set, SIGINT);
+    sigaddset(&set, SIGTERM);
+
+    // Now 'set' contains SIGINT and SIGTERM signals
+    // You can use sigismember() to check if a signal is in the set
+
+    return 0;
+}
+```
+
+#### sigaction():
+##### This function is used to change the action taken by a process upon receipt of a specific signal.
+##### It allows you to specify a new signal handler function for a given signal.
+```bash
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+
+// Signal handler function for SIGINT
+void sigint_handler(int signum) {
+    printf("Received SIGINT signal\n");
+    // Perform any necessary cleanup actions
+    // Terminate the program
+    exit(EXIT_SUCCESS);
+}
+
+int main() {
+    // Set up signal handler for SIGINT using sigaction
+    struct sigaction sa;
+    sa.sa_handler = sigint_handler; // Specify the handler function
+    sigemptyset(&sa.sa_mask);       // Clear the signal mask during handling
+    sa.sa_flags = 0;                // No special flags
+
+    // Register the handler for SIGINT
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+    // Main program loop
+    while (1) {
+        // Your program logic goes here
+        // In this example, we just sleep indefinitely
+        sleep(1);
+    }
+
+    return 0;
+}
+```
 
 ## HOW TO USE
 #### 1º - Clone the repository
@@ -143,19 +267,3 @@ make
 ## BONUS
 - [x] Add reception acknowledgement system.
 - [x] Support Unicode characters.
-
-## NORMINETTE
-> At 42 School, it is expected that almost every project is written following the Norm, which is the coding standard of the school.
-
-```
-- No for, do...while, switch, case, goto, ternary operators, or variable-length arrays allowed;
-- Each function must be a maximum of 25 lines, not counting the function's curly brackets;
-- Each line must be at most 80 columns wide, with comments included;
-- A function can take 4 named parameters maximum;
-- No assigns and declarations in the same line (unless static);
-- You can't declare more than 5 variables per function;
-- ...
-```
-
-* [42 Norms](https://github.com/42School/norminette/blob/master/pdf/en.norm.pdf) - Information about 42 code norms. `PDF`
-* [Norminette](https://github.com/42School/norminette) - Tool to respect the code norm, made by 42. `GitHub`
