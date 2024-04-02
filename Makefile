@@ -1,56 +1,60 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    makefile                                           :+:      :+:    :+:    #
+#    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: maabdela-a <marvin@42.fr>                  +#+  +:+       +#+         #
+#    By: maabdela <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/03/27 20:50:44 by maabdela-a          #+#    #+#            #
-#    Updated: 2024/03/27 22:29:10 by maabdela-a         ###   ########.fr      #
+#    Created: 2024/03/29 13:58:10 by maabdela          #+#    #+#              #
+#    Updated: 2024/03/29 13:59:27 by maabdela         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 .SILENT:
 
-# Colors
 RESET = \033[0m       # Text Reset
-BLACK = \033[1;30m       # Black
-RED = \033[1;31m         # Red
 GREEN = \033[1;32m       # Green
-YELLOW = \033[1;33m      # Yellow
-BLUE = \033[1;34m       # Blue
-PURPLE = \033[1;35m     # Purple
 CYAN = \033[1;36m        # Cyan
-WHITE = \033[1;37m       # White
 
-# compiler 
-CC = gcc
+# compiler
+ LIBFT = libft/libft.a
+ CC = gcc 
 
-# compiler flages
-CFLAGS = -Wall -Wextra -Werror
+# Cflags
+ CFLAGS = -Wextra -Wall -Werror
 
-# Target files
+# target
+ PRINTF = ./printf/libftprintf.a
+ PRINTFDIR = ./printf
+ 
  SERVER = server 
- CLIENT = client 
-
  SER_OBJ = server.o 
+
+ CLIENT = client 
  CLI_OBJ = client.o 
 
  UTILS = utils 
- UTL_OBJ = utils.o 
+ UTI_OBJ = utils.o 
 
- all: $(CLIENT) $(SERVER)
-  
- $(SERVER): $(SER_OBJ) $(UTL_OBJ)
-			$(CC) $(CFLAGS) $(SER_OBJ) $(UTL_OBJ) -o $(SERVER)
-			printf "Server 			$(green)[SUCCESS]$(RESET)\n"
+ all: $(SERVER) $(CLIENT)
 
- $(CLIENT): $(CLI_OBJ) $(UTL_OBJ)
-			$(CC) $(CFLAGS) $(CLI_OBJ) $(UTL_OBJ) -o $(CLIENT)
-			printf "Client			$(green)[SUCCESS]$(RESET)\n"
+$(SERVER): $(SER_OBJ) $(UTI_OBJ) $(LIBFT)
+		$(CC) $(CFLAGS) $(SER_OBJ) $(UTI_OBJ) libft/libft.a -o $(SERVER) 
+		@printf "server				$(green)[OK]$(RESET)\n"
 
- clean:
-		$(RM) $(CLIENT) $(SERVER)
-		printf "fclean				$(CYAN)[SUCCESS]$(RESET)\n"
+$(CLIENT): $(CLI_OBJ) $(UTI_OBJ) $(LIBFT)
+		$(CC) $(CFLAGS) $(CLI_OBJ) $(UTI_OBJ) libft/libft.a -o $(CLIENT)
+		@printf "client				$(green)[OK]$(RESET)\n"
+				
+$(LIBFT):
+		${MAKE} -C ./libft
+		
+clean: 
+	          $(RM) $(CLIENT) $(CLI_OBJ) $(SERVER) $(SER_OBJ) $(UTI_OBJ)
+	   	 @printf "clean				$(CYAN)[OK]$(RESET)\n"
+	    
+fclean: clean 
+		$(RM) $(LIBFT) $(SERVER) $(CLIENT)
 
-re:		fclean all
-.PHONY: clean fclean all re norm		
+ re:		fclean all
+.PHONY: clean fclean all re norm
